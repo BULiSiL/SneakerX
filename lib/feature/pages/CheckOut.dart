@@ -10,11 +10,13 @@ class CheckOut extends StatefulWidget {
   final String id;
   final String size;
   final int price;
+
   const CheckOut({
     required this.id,
     required this.size,
     required this.price,
-    super.key});
+    super.key,
+  });
 
   @override
   State<CheckOut> createState() => _CheckOutState();
@@ -25,9 +27,15 @@ class _CheckOutState extends State<CheckOut> {
   late DocumentSnapshot document;
   final int shippingFee = 50;
   int increment = 1;
-  late int subtotal = 0;
-  late int total = 0;
+  late int subtotal = widget.price;
+  late int total = widget.price + shippingFee;
   String userAddress = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
 
   Future<void> _fetchUserData() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -37,16 +45,19 @@ class _CheckOutState extends State<CheckOut> {
           .doc(user.uid)
           .get();
 
-      setState(() {
-        userAddress = userData['address'] ?? ''; // Assuming address is a field in your 'users' collection
-      });
+      if (mounted) {
+        setState(() {
+          userAddress = userData['address'] ?? ''; // Assuming address is a field in your 'users' collection
+        });
+      }
     }
   }
 
   void _updateSubtotal() {
     subtotal = widget.price * increment;
   }
-  void _updateTotal(){
+
+  void _updateTotal() {
     total = subtotal + shippingFee;
   }
 
@@ -80,24 +91,21 @@ class _CheckOutState extends State<CheckOut> {
         ),
         title: const Text(
           "Check Out",
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.transparent,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FireStoreServices.getAllShoes(),
-        builder: (context, snapshot){
-          //if we have data, get all the docs
-          if(snapshot.hasData){
+        builder: (context, snapshot) {
+          // If we have data, get all the docs
+          if (snapshot.hasData) {
             List<QueryDocumentSnapshot> shoesList = snapshot.data!.docs.cast<QueryDocumentSnapshot>();
-            // Find the recipe document with matching docID
+            // Find the shoe document with matching docID
             document = shoesList.firstWhere((doc) => doc.id == widget.id);
             String docID = document.id;
 
-            Map<String, dynamic> data =
-            document.data() as Map<String, dynamic>;
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
             String shoeName = data['name'];
             String shoeBrand = data['brand'];
             String description = data['description'];
@@ -108,10 +116,6 @@ class _CheckOutState extends State<CheckOut> {
             List<String> sizes = List<String>.from(data['availableSizes']);
             List<String> thumbNails = List<String>.from(data['thumbnailUrls']);
 
-            _updateSubtotal();
-            _updateTotal();
-            _fetchUserData();
-
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,7 +125,7 @@ class _CheckOutState extends State<CheckOut> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0), // Set the border radius here
+                          borderRadius: BorderRadius.circular(10.0),
                           child: Container(
                             height: 150,
                             decoration: const BoxDecoration(
@@ -129,7 +133,11 @@ class _CheckOutState extends State<CheckOut> {
                             ),
                             child: imageUrl.isNotEmpty
                                 ? Center(
-                                child: Image.network(imageUrl,fit: BoxFit.fill, width: 150,)
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.fill,
+                                width: 150,
+                              ),
                             )
                                 : const Center(
                               child: Text(
@@ -140,14 +148,19 @@ class _CheckOutState extends State<CheckOut> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10,),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       Container(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            //name
-                            Text(shoeName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-                            Text(widget.size)//will modify later
+                            // name
+                            Text(
+                              shoeName,
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            Text(widget.size) // will modify later
                           ],
                         ),
                       ),
@@ -159,8 +172,8 @@ class _CheckOutState extends State<CheckOut> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      //quantity
-                      //will modify later
+                      // quantity
+                      // will modify later
                       Row(
                         children: [
                           const Text('Qty'),
@@ -268,49 +281,22 @@ class _CheckOutState extends State<CheckOut> {
                             userEmail: user.email!);
                         FireStoreServices.removeFromCart(userId: user.uid, shoeId: docID);
                         Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context){
-                              return const BottomNav();
-                            }));
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                backgroundColor: Colors.white,
-                                title: const CircleAvatar(
-                                  radius: 30,
-                                  backgroundColor: Colors.green,
-                                  child: Icon(Icons.check, color: Colors.white,),
-                                ),
-                                content:
-                                const Text("Your order is placed successfully!"),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        "OK",
-                                        style: TextStyle(color: Colors.black),
-                                      )),
-                                ],
-                              );
-                            });
+                            MaterialPageRoute(builder: (context) => const BottomNav()));
                       },
                       child: Container(
-                        width: 200,
+                        width: MediaQuery.of(context).size.width,
                         height: 50,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.green,
-                        ),
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(12)),
                         child: const Center(
-                          child: Text('Place Order',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 16,
-                                color: Colors.white
-                            ),),
-                        ),
+                            child: Text(
+                              'Proceed to Payment',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16),
+                            )),
                       ),
                     ),
                   ),
@@ -318,9 +304,7 @@ class _CheckOutState extends State<CheckOut> {
               ],
             );
           }
-          else{
-            return const Center(child: CircularProgressIndicator(color: Colors.white,));
-          }
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );

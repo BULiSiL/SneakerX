@@ -188,7 +188,7 @@ class OrderPage extends StatelessWidget {
                                         });
                                   },
                                   child: Container(
-                                    height: 40,
+                                    height: 45,
                                     width: 100,
                                     decoration: BoxDecoration(
                                       color: Colors.grey,

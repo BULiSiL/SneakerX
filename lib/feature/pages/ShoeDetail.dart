@@ -48,22 +48,22 @@ class _ShoeDetailState extends State<ShoeDetail> {
           style: TextStyle(
               fontSize: 20,
               color: Colors.black,
-              fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w600
+          ),
         ),
         backgroundColor: Colors.transparent,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FireStoreServices.getAllShoes(),
-        builder: (context, snapshot){
-          //if we have data, get all the docs
-          if(snapshot.hasData){
+        builder: (context, snapshot) {
+          // if we have data, get all the docs
+          if (snapshot.hasData) {
             List<QueryDocumentSnapshot> shoesList = snapshot.data!.docs.cast<QueryDocumentSnapshot>();
-            //find the recipe document with matching docID
+            // find the recipe document with matching docID
             document = shoesList.firstWhere((doc) => doc.id == widget.id);
             String docID = document.id;
 
-            Map<String, dynamic> data =
-            document.data() as Map<String, dynamic>;
+            Map<String, dynamic> data = document.data() as Map<String, dynamic>;
             String shoeName = data['name'];
             String shoeBrand = data['brand'];
             String description = data['description'];
@@ -74,101 +74,107 @@ class _ShoeDetailState extends State<ShoeDetail> {
             List<String> sizes = List<String>.from(data['availableSizes']);
             List<String> thumbNails = List<String>.from(data['thumbnailUrls']);
 
-
             return Column(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: SizedBox(
-                            height: 300,
-                            child: PageView(
-                              controller: _pageController,
-                              children: [
-                                ImageDisplay(imageUrl: imageUrl,),
-                                ImageDisplay(imageUrl: thumbNails[0],),
-                                ImageDisplay(imageUrl: thumbNails[1],),
-                                ImageDisplay(imageUrl: thumbNails[2],),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      //description
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: SizedBox(
+                          height: 300,
+                          child: PageView(
+                            controller: _pageController,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 24, right: 24, bottom: 3),
-                                child: Text(
-                                  shoeName,
-                                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 6, left: 24),
-                                child: Text('${price.toString()} Bahts',
-                                    style:
-                                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
-                              ),
+                              ImageDisplay(imageUrl: imageUrl),
+                              ImageDisplay(imageUrl: thumbNails[0]),
+                              ImageDisplay(imageUrl: thumbNails[1]),
+                              ImageDisplay(imageUrl: thumbNails[2]),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 24.0),
-                            child: LikesButton(
-                                userId: user.uid,
-                                shoe: Shoes(
-                                  id: docID,
-                                  name: shoeName,
-                                  brand: shoeBrand,
-                                  description: description,
-                                  imageUrl: imageUrl,
-                                  isFavorite: isFavorite,
-                                  price: price,
-                                  quantity: quantity,
-                                  sizes: sizes,
-                                  thumbNails: thumbNails
-                                )),
-                          )
-                        ],
+                        ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 24.0, top: 15.0),
-                        child: Expanded(
-                          child: Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(description, style: const TextStyle(fontWeight: FontWeight.bold),),
-                              ],
+                    ),
+                    // description
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, bottom: 3),
+                              child: Text(
+                                shoeName,
+                                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6, left: 24),
+                              child: Text(
+                                '${price.toString()} Bahts',
+                                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 24.0),
+                          child: LikesButton(
+                            userId: user.uid,
+                            shoe: Shoes(
+                              id: docID,
+                              name: shoeName,
+                              brand: shoeBrand,
+                              description: description,
+                              imageUrl: imageUrl,
+                              isFavorite: isFavorite,
+                              price: price,
+                              quantity: quantity,
+                              sizes: sizes,
+                              thumbNails: thumbNails,
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24.0, top: 15.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            description,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Text('Brand - $shoeBrand', style: const TextStyle(fontWeight: FontWeight.bold,),),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Text(
+                        'Brand - $shoeBrand',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-                        child: Divider(thickness: 2,),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
+                      child: Divider(thickness: 2),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 24, right: 24, bottom: 10),
+                      child: Text(
+                        'Size',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 24, right: 24, bottom: 10,),
-                        child: Text('Size', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
-                      ),
-                      buildSizeSelection(sizes)
-                    ],
-                  ),
+                    ),
+                    buildSizeSelection(sizes)
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
@@ -183,81 +189,84 @@ class _ShoeDetailState extends State<ShoeDetail> {
                               const SnackBar(content: Text('Added to the Cart!')),
                             );
                             FireStoreServices.addToCart(
-                                userId: user.uid,
-                                shoe: Shoes(
-                                    id: docID,
-                                    name: shoeName,
-                                    brand: shoeBrand,
-                                    description: description,
-                                    imageUrl: imageUrl,
-                                    isFavorite: isFavorite,
-                                    price: price,
-                                    quantity: quantity,
-                                    sizes: sizes,
-                                    thumbNails: thumbNails
-                                ),
-                                shoeSize: selectedSize
+                              userId: user.uid,
+                              shoe: Shoes(
+                                id: docID,
+                                name: shoeName,
+                                brand: shoeBrand,
+                                description: description,
+                                imageUrl: imageUrl,
+                                isFavorite: isFavorite,
+                                price: price,
+                                quantity: quantity,
+                                sizes: sizes,
+                                thumbNails: thumbNails,
+                              ),
+                              shoeSize: selectedSize,
                             );
                           },
                           child: Container(
                             width: 170,
-                            height:50,
+                            height: 50,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
                               color: Colors.green,
                             ),
                             child: const Center(
-                              child: Text('Add to cart',
+                              child: Text(
+                                'Add to cart',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 16,
-                                    color: Colors.white
-                                ),),
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 30,),
+                      const SizedBox(width: 30),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context){
-                                      return CheckOut(id: docID, size: selectedSize, price : price);
-                                    }
-                                )
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return CheckOut(id: docID, size: selectedSize, price: price);
+                                },
+                              ),
                             );
                           },
                           child: Container(
                             width: 170,
-                            height:50,
+                            height: 50,
                             decoration: BoxDecoration(
                               border: Border.all(width: 2, color: Colors.blue),
                               borderRadius: BorderRadius.circular(12),
-
                             ),
                             child: const Center(
-                              child: Text('Check Out',
+                              child: Text(
+                                'Check Out',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 16,
-                                    color: Colors.blue
-                                ),),
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16,
+                                  color: Colors.blue,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
-                )
-
+                ),
               ],
             );
-          }
-          else{
-            return const Center(child: CircularProgressIndicator(color: Colors.white,));
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
           }
         },
       ),

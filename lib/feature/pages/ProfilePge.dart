@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 100,),
+            const SizedBox(height: 130,),
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100.0),
@@ -67,35 +67,22 @@ class _ProfilePageState extends State<ProfilePage> {
             //   child: Text('Address', style: TextStyle(fontSize: 16),),
             // ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Expanded(
-                child: Container(
-                  height: 90,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0)
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(user.displayName!,style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+                      Text('  |  ${user.email}')
+                    ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(user.displayName!,style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
-                            Text('  |  ${user.email}')
-                          ],
-                        ),
-                
-                        Text(userAddress)
-                      ],
-                    ),
-                  ),
-                ),
+                  Text(userAddress)
+                ],
               ),
             ),
+            const Spacer(),
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0,vertical: 24.0),
@@ -150,7 +137,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-            )
+            ),
+            const SizedBox(height: 20,)
           ],
         ),
       ),

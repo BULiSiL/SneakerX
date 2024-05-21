@@ -81,6 +81,7 @@ class _CartPageState extends State<CartPage> {
                         ],
                       ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
@@ -147,7 +148,6 @@ class _CartPageState extends State<CartPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10,),
                           IconButton(
                               onPressed: (){
                                 FireStoreServices.removeFromCart(userId: user.uid, shoeId: docID);

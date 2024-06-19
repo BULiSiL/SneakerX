@@ -1,3 +1,3 @@
 # sneakerx
 
-An E-commerce Application. Available on Google Play Store. We will modify further more functions.
+An E-commerce Application. We will modify further more functions.
